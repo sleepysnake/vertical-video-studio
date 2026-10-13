@@ -33,6 +33,7 @@ Copy-Item -LiteralPath (Join-Path $project "CHANGELOG.md") -Destination (Join-Pa
 New-Item -ItemType Directory -Force -Path (Join-Path $distDir "docs") | Out-Null
 Copy-Item -LiteralPath (Join-Path $project "docs\WORKFLOW.md") -Destination (Join-Path $distDir "docs\WORKFLOW.md")
 Copy-Item -LiteralPath (Join-Path $project "docs\nameplate-styles.png") -Destination (Join-Path $distDir "docs\nameplate-styles.png")
+Copy-Item -Recurse -LiteralPath (Join-Path $project "docs\screenshots") -Destination (Join-Path $distDir "docs")
 
 $releaseDir = Join-Path $project "release"
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null

@@ -19,6 +19,7 @@ files += sorted((project / "tests").rglob("*.py"))
 files += [path for path in sorted((project / "docs").rglob("*.md"))
           if not path.name.endswith(".local.md") and path.name != "EDIT_REGRESSIONS.md"]
 files += [project / "docs" / "nameplate-styles.png"]
+files += sorted((project / "docs" / "screenshots").glob("*.png"))
 files += sorted((project / ".github").rglob("*.yml"))
 files += sorted((project / "config").rglob("*.json"))
 files += sorted((project / "config").rglob("*.txt"))
