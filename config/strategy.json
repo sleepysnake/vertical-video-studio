@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "silence_seconds": 1.0,
+  "silence_margin": 0.12,
+  "max_single_model_cut": 12.0,
+  "max_removal_ratio": 0.4,
+  "min_retained_fragment": 0.18,
+  "min_model_cut_seconds": 0.20,
+  "max_subtitle_cleanup_seconds": 1.0,
+  "abandoned_pause_seconds": 0.55,
+  "max_abandoned_start_seconds": 3.0
+}
