@@ -43,6 +43,17 @@ def seed(folder, video=None):
 
 
 class CaptionEditorTests(unittest.TestCase):
+    def test_manual_edits_survive_source_path_alias_normalization(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            source = folder / "source.mp4"
+            source.touch()
+            data = seed(folder / "cache", source)
+            data["edit_plan"]["source"]["path"] = str(folder / ".." / folder.name / "source.mp4")
+            save_edits(folder / "cache", data, [{"start": 0, "end": 1.5, "text": "手动字幕"}])
+            data["edit_plan"]["source"]["path"] = str(source.resolve())
+            self.assertEqual(load_edits(folder / "cache", data)[0]["text"], "手动字幕")
+
     def test_model_only_needs_clean_text_and_keeps_full_source_times(self):
         for original, expected in (("咦我吃吃得不多", "我吃得不多"),
                                    ("咦我今天并没有吃多少", "我今天并没有吃多少")):

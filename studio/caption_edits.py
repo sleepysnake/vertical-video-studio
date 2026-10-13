@@ -10,12 +10,20 @@ from pathlib import Path
 from .edits import keep_intervals, output_duration, retime_captions
 
 
-def base_key(data: dict) -> str:
-    source = data.get("edit_plan", {}).get("source", {})
+def _base_key(data: dict, normalize_path: bool) -> str:
+    source = dict(data.get("edit_plan", {}).get("source", {}))
+    if normalize_path and source.get("path"):
+        # Windows TEMP can use an 8.3 alias while the renderer stores the
+        # resolved long path. Both refer to the same unchanged source file.
+        source["path"] = str(Path(source["path"]).resolve())
     base = {"source": source, "cuts": data["edit_plan"]["cuts"],
             "captions": [{"start": c["start"], "end": c["end"], "text": c["text"]}
                          for c in retime_captions(data["captions"], data["edit_plan"]["cuts"])]}
     return hashlib.sha256(json.dumps(base, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+
+
+def base_key(data: dict) -> str:
+    return _base_key(data, normalize_path=True)
 
 
 def validate_edits(captions: list[dict], duration: float) -> list[dict]:
@@ -55,7 +63,8 @@ def load_edits(folder: Path, data: dict) -> list[dict] | None:
     if not target.is_file():
         return None
     value = json.loads(target.read_text(encoding="utf-8"))
-    if value.get("version") != 1 or value.get("base_sha256") != base_key(data):
+    if value.get("version") != 1 or value.get("base_sha256") not in {
+            base_key(data), _base_key(data, normalize_path=False)}:
         return None
     return validate_edits(value["captions"], output_duration(data["edit_plan"]["cuts"],
                                                           data["edit_plan"]["source_duration"]))
